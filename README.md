@@ -17,7 +17,6 @@
 
 ## 3、腾讯云部署
 开始部署腾讯云，第一次使用也许你需要实名注册：
-
 [腾讯云Serverless](https://console.cloud.tencent.com/scf/index)
 
 

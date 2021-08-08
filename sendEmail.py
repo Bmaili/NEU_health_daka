@@ -31,6 +31,6 @@ class sendEmail():
             print('Error: 无法发送邮件')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' :
     _sendEmail = sendEmail()
     _sendEmail.sendMessage('这是一条测试信息')

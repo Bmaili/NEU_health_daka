@@ -25,8 +25,9 @@ class daka():
         try:
             login_response = self.my_session.get(self.login_url)
             self.lt = re.findall(r'LT-[0-9]*-[0-9a-zA-Z]*-tpass', login_response.text, re.S)[0]
-            post_url = 'https://pass.neu.edu.cn' + re.findall(r'\/tpass\/login[^\"] *', login_response.text, re.S)[0]
-
+            #post_url = 'https://pass.neu.edu.cn' + re.findall(r'\/tpass\/login[^\"] *', login_response.text, re.S)[0]
+            post_url = 'https://pass.neu.edu.cn/tpass/login'
+            
             login_form_items = {
                 'rsa': self.id + self.password + self.lt,
                 'ul': str(len(self.id)),
@@ -72,7 +73,7 @@ class daka():
     def temperatureDaka(self):
         #体温打卡
         try:
-            hour = (time.localtime().tm_hour + 8) % 24   # 加8是因为腾讯云跑出来是格林时间
+            hour = (time.localtime().tm_hour + 8) % 24   # 加8是因为腾讯云跑出来是格林时间，若是运行在自己服务器上需要改回来~
             temperature_url = 'https://e-report.neu.edu.cn/inspection/items/{}/records'.format(('1' if 7 <= hour <= 9 else '2' if 12 <= hour <= 14 else '3'))
             temperature_items = {
                 '_token': self.token,

@@ -1,7 +1,7 @@
 import re
 import time
 import requests
-import sendEmail
+import sendMsg
 import config
 
 
@@ -13,7 +13,7 @@ class daka():
         self.name = ""
         self.lt = ""
         self.my_session = requests.session()
-        self.sendEmail = sendEmail.sendEmail()
+        self.sendMsg=sendMsg.sendMsg()
 
         self.login_url = 'https://e-report.neu.edu.cn/login'
         self.create_url = 'https://e-report.neu.edu.cn/notes/create'
@@ -22,6 +22,7 @@ class daka():
 
     def login(self):
         #登陆，更新session
+        msg=''
         try:
             login_response = self.my_session.get(self.login_url)
             self.lt = re.findall(r'LT-[0-9]*-[0-9a-zA-Z]*-tpass', login_response.text, re.S)[0]
@@ -37,13 +38,15 @@ class daka():
                 '_eventId': 'submit'
             }
             post_response = self.my_session.post(post_url, login_form_items)
+            msg=config.stutendID+'登录成功!'
         except:
-            if config.isSendMessage:
-                self.sendEmail.sendMessage('健康打卡登录失败！请手动完成打卡！')
+            msg=config.stutendID+'登录失败!请手动完成打卡!'
+        return msg
 
 
     def healthDaka(self):
         #健康打卡
+        msg=''
         try:
             note_response = self.my_session.get(self.create_url)
             self.token = re.findall(r'name=\"_token\"\s+value=\"([0-9a-zA-Z]+)\"',note_response.text, re.S)[0]
@@ -63,15 +66,17 @@ class daka():
             health_response = self.my_session.post(self.note_url, health_items)
             if health_response.status_code == 201:
                 print(str(health_response) + '健康打卡成功')
-            elif config.isSendMessage:
-                self.sendEmail.sendMessage('健康打卡失败！请手动完成打卡！' + str(health_response))
+                msg=config.stutendID+'健康打卡成功!'
+            else:
+                msg=config.stutendID+'健康打卡失败！请手动完成打卡！'+ '(响应异常)'+str(health_response)
         except:
-            if config.isSendMessage:
-                self.sendEmail.sendMessage('健康打卡失败！请手动完成打卡！')
+                msg=config.stutendID+'健康打卡失败！请手动完成打卡！'+ '(执行异常)'
+        return msg
 
 
     def temperatureDaka(self):
         #体温打卡
+        msg=''
         try:
             hour = (time.localtime().tm_hour + 8) % 24   # 加8是因为腾讯云跑出来是格林时间，若是运行在自己服务器上需要改回来~
             temperature_url = 'https://e-report.neu.edu.cn/inspection/items/{}/records'.format(('1' if 7 <= hour <= 9 else '2' if 12 <= hour <= 14 else '3'))
@@ -84,17 +89,19 @@ class daka():
             temperature_response = self.my_session.post(temperature_url,    temperature_items)
             if temperature_response.status_code == 200:
                 print(str(temperature_response) + '体温打卡成功')
-            elif config.isSendMessage:
-                self.sendEmail.sendMessage('体温打卡失败！请手动完成打卡！' + str(temperature_response))
+                msg=config.stutendID+'体温打卡成功!'
+            else:
+                msg=config.stutendID+'体温打卡失败！请手动完成打卡！'+ '(响应异常)'+str(temperature_response)
         except:
-            if config.isSendMessage:
-                self.sendEmail.sendMessage('体温打卡失败！请手动完成打卡！')
+                msg=config.stutendID+'体温打卡失败！请手动完成打卡！'+ '(执行异常)'
+        return msg
 
 def main_handler(event, context):
     _daka=daka()
-    _daka.login()
-    _daka.healthDaka()
-    _daka.temperatureDaka()
+    loginMsg=_daka.login()
+    healthMsg=_daka.healthDaka()
+    temperatureMsg=_daka.temperatureDaka()
+    _daka.sendMsg.sendMessage(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())+'\n'+loginMsg+'\n'+healthMsg+'\n'+temperatureMsg)
 
 if __name__ == '__main__':
     main_handler(None,None)

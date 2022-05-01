@@ -9,6 +9,9 @@ passward = ''
 ### 通知部分,打卡失败进行邮件通知
 # 当相应渠道设置后，将自动推送通知
 
+# 是否仅当打卡失败时才通知，False则打卡成功失败皆通知
+sendMsgOnlyError = True
+
 ## 邮件通知
 # 设置自己接收打卡信息通知的邮箱(XXXX@qq.com)
 receiver = ''

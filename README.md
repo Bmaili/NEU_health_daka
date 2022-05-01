@@ -1,52 +1,70 @@
-### python（本地无python环境也ok）脚本进行NEU健康、体温打卡，腾讯云云函数定时调用脚本，以防万一，打卡失败时qq邮箱通知。
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/QQ图片20220502013357.jpg)
+
+# 脚本说明
+
+**python（本地无python环境也ok）脚本进行NEU健康、体温打卡，使用腾讯云云函数定时调用脚本，以防万一，打卡失败时将通知使用者。**
 
 
-# 使用流程：
 
-## 1、打卡配置
-下载所有文件
 
-在 config.py 文件中填写需要打卡的学号与密码
+# 使用流程
 
-![1.png](https://z3.ax1x.com/2021/08/08/f1pyTK.png)
-## 2、通知邮箱配置（可选）
+## 个人信息配置
+
+下载所有文件，解压，在 config.py 文件中填写需要打卡的学号与密码
+
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/image-20220502010356041.png)
+## 通知配置（可选）
+
+打卡通知设置，相应渠道设置后，将自动推送通知。
+
+- ### 邮箱通知
+
 开启qq邮箱SMTP服务，得到授权码：[参考博客](https://www.cnblogs.com/Alear/p/11594932.html)
 
-在 config.py 文件中配置邮箱信息。
-之后可直接运行sendEmail.py文件测试发送效果。
+在 config.py 文件中配置邮箱信息。之后可直接运行sendEmail.py文件测试发送效果。
 
-## 3、腾讯云部署
-开始部署腾讯云，第一次使用也许你需要实名注册：
-[腾讯云Serverless](https://console.cloud.tencent.com/scf/index)
+- ### Server酱通知
 
+在 config.py 文件中配置Server酱的SCKEY，可以在Server酱的网站注册获取。之后可直接运行sendEmail.py文件测试发送效果。
 
-点击函数服务，新建一个云函数：
+## 腾讯云部署
+1. 开始部署腾讯云，第一次使用也许你需要实名注册：[腾讯云Serverless](https://console.cloud.tencent.com/scf/index)
 
-![2.png](https://z3.ax1x.com/2021/08/08/f1CFVP.md.png)
+2. 点击函数服务，新建一个云函数：
 
-
-如图设置：
-
-![3.png](https://z3.ax1x.com/2021/08/08/f1CxoV.md.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/1.png)
 
 
-将修改后的所有文件压缩，然后如图设置，执行方法格式为：文件名+方法名：
 
-![4.png](https://z3.ax1x.com/2021/08/08/f1PyT0.md.png)
+3. 自定义函数，注意运行环境是Python3.6：
 
-
-上传成功如下，然后点击部署，点击测试，即可立即进行打卡
-
-![5.png](https://z3.ax1x.com/2021/08/08/f1iWUP.md.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/2.png)
 
 
-创建一个自动打卡的定时触发器：选择“自定义触发周期”，cron表达式我是这样写的：11 12 8,13,20 * * * * ，表示每天8点、13点、20点，12分11秒触发函数，即每天三次健康打卡三次体温打卡
 
-![6.png](https://z3.ax1x.com/2021/08/08/f1kiQg.png)
+4. 将修改后的所有文件压缩，然后如图设置，执行方法格式为：文件名+方法名：
+
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/3.png)
 
 
-点击“日志查询”可查看之前的日志：
 
-![f1E0Zd.md.png](https://z3.ax1x.com/2021/08/08/f1E0Zd.md.png)
+5. 高级配置：环境配置里的执行超时时间不能太小
 
-### 完成。通知部分也能用其他的邮箱或者server酱，自动打卡部分也可以挂自己云服务器上或者用git Actions(有时不太稳定)，兄弟们按需修改。
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/4.png)
+
+
+
+6. 触发器配置：自定义一个定时触发器，cron表达式我是这样写的：11 12 8,13,20 * * * * ，表示每天8点、13点、20点，12分11秒触发函数，即每天三次健康打卡三次体温打卡
+
+   ![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/5.png)
+
+   
+
+7. 点击”完成“进行创建。点击”部署“可再次部署，点击”测试“可立即测试打卡，点击日志查询可查看近期打卡日志。
+
+   ![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/image-20220502013928983.png)
+
+## 其他
+
+通知部分也能用其他邮箱，自动打卡部分也可以挂自己云服务器上或者用GitHub Actions(偶尔抽风)，兄弟们按需修改（体温打卡因为腾讯云函数跑出来是格林时间，进行了+8处理，若是部署到自己服务器上需要改回来）。

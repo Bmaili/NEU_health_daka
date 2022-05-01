@@ -33,31 +33,31 @@
 
 2. 点击函数服务，新建一个云函数：
 
-![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/1.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/yun1.png)
 
 
 
 3. 自定义函数，注意运行环境是Python3.6：
 
-![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/2.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/yun2.png)
 
 
 
 4. 将修改后的所有文件压缩，然后如图设置，执行方法格式为：文件名+方法名：
 
-![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/3.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/yun3.png)
 
 
 
 5. 高级配置：环境配置里的执行超时时间不能太小
 
-![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/4.png)
+![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/yun4.png)
 
 
 
 6. 触发器配置：自定义一个定时触发器，cron表达式我是这样写的：11 12 8,13,20 * * * * ，表示每天8点、13点、20点，12分11秒触发函数，即每天三次健康打卡三次体温打卡
 
-   ![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/5.png)
+   ![](http://bmalimarkdown.oss-cn-beijing.aliyuncs.com/img/yun5.png)
 
    
 

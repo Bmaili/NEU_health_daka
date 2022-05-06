@@ -1,4 +1,5 @@
 import re
+from sre_constants import SUCCESS
 import time
 import requests
 import sendMsg
@@ -25,6 +26,7 @@ class daka():
     def login(self):
         #登陆，更新session
         msg=''
+        success=False
         try:
             login_response = self.my_session.get(self.login_url)
             self.lt = re.findall(r'LT-[0-9]*-[0-9a-zA-Z]*-tpass', login_response.text, re.S)[0]
@@ -45,9 +47,11 @@ class daka():
             self.name = re.findall(r'当前用户：\s*(\w+)\s*', note_response.text, re.S)[0]
 
             msg=config.stutendID+'登录成功!'
+            success=True
         except:
             msg=config.stutendID+'登录失败!请手动完成打卡!'
-        return msg
+            success=False
+        return msg,success
 
 
     def healthDaka(self):
@@ -123,21 +127,29 @@ class daka():
 
 
 def main_handler(event, context):
+    # 初始化变量
+    pushMsg=''
+    loginMsg,loginSuc='',False
+    healthMsg,healSuc='',False
+    temperatureMsg,tempSuc='',False
     _daka = daka()
-    loginMsg = _daka.login()
-    healthMsg,healSuc,temperatureMsg,tempSuc='',True,'',True
 
-    # 控制健康打卡每天一次，重复打卡自动跳过
-    if _daka.checkHealthDaka():
-        healthMsg,healSuc =  config.stutendID+'健康已打卡,不重复打卡!',True
-    else: 
-        healthMsg, healSuc = _daka.healthDaka()
+    # 初始化登录信息
+    loginMsg,loginSuc = _daka.login()      
     
-    # 控制在体温打卡时间段打卡，不在时间段自动跳过
-    if _daka.checkTimeTemperatureDaka():
-        temperatureMsg, tempSuc = _daka.temperatureDaka()
-    else:
-        temperatureMsg, tempSuc = config.stutendID+'不是体温打卡时间段，不打卡!',False
+    # 登录成功后进行后续打卡任务
+    if(loginSuc):
+        # 控制健康打卡每天一次，重复打卡自动跳过
+        if _daka.checkHealthDaka():
+            healthMsg,healSuc =  config.stutendID+'健康已打卡,不重复打卡!',True
+        else: 
+            healthMsg, healSuc = _daka.healthDaka()
+    
+        # 控制在体温打卡时间段打卡，不在时间段自动跳过
+        if _daka.checkTimeTemperatureDaka():
+            temperatureMsg, tempSuc = _daka.temperatureDaka()
+        else:
+            temperatureMsg, tempSuc = config.stutendID+'不是体温打卡时间段，不打卡!',False
 
     
     pushMsg=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())+'\n'+loginMsg+'\n'+healthMsg+'\n'+temperatureMsg

@@ -29,7 +29,9 @@
 在 config.py 文件中配置Server酱的SCKEY，可以在Server酱的网站注册获取。之后可直接运行sendEmail.py文件测试发送效果。
 
 ## 腾讯云部署
-1. 开始部署腾讯云，第一次使用也许你需要实名注册：[腾讯云Serverless](https://console.cloud.tencent.com/scf/index)
+#### （自2022年6月1日起腾讯云函数服务不再免费，建议换成[华为云函数工作流](https://console.huaweicloud.com/functiongraph/?region=cn-south-1#/serverless/dashboard)，使用方式与下面相似）
+
+1. 开始部署腾讯云，第一次使用也许你需要实名注册：[~~腾讯云Serverless~~](https://console.cloud.tencent.com/scf/index)     [华为云函数工作流](https://console.huaweicloud.com/functiongraph/?region=cn-south-1#/serverless/dashboard)
 
 2. 点击函数服务，新建一个云函数：
 
